@@ -5,10 +5,10 @@ open Microsoft.Xna.Framework.Graphics
 open Microsoft.Xna.Framework.Input
 
 type WindowSize(window: GameWindow) =
-    member this.width = window.ClientBounds.Width
-    member this.height = window.ClientBounds.Height
-    member this.update() = WindowSize(window)
-    member this.as_string = sprintf "%s %s" (this.width.ToString()) (this.height.ToString())
+    member this.Width = window.ClientBounds.Width
+    member this.Height = window.ClientBounds.Height
+    member this.Update() = WindowSize(window)
+    member this.AsString = sprintf "%s %s" (this.Width.ToString()) (this.Height.ToString())
 
 type Game1() as this =
     inherit Game()
@@ -26,8 +26,8 @@ type Game1() as this =
         this.Window.AllowUserResizing <- true
         // graphics.ApplyChanges()
         this.Window.ClientSizeChanged.Add(fun arg ->
-            do windowSize <- windowSize.update()
-               printfn "%s" (windowSize.as_string))
+            do windowSize <- windowSize.Update()
+               printfn "%s" (windowSize.AsString))
 
     override this.Initialize() =
         // TODO: Add your initialization logic here
