@@ -4,11 +4,18 @@ open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Graphics
 open Microsoft.Xna.Framework.Input
 
+type WindowSize(window: GameWindow) =
+    member this.width = window.ClientBounds.Width
+    member this.height = window.ClientBounds.Height
+    member this.update() = WindowSize(window)
+    member this.as_string = sprintf "%s %s" (this.width.ToString()) (this.height.ToString())
+
 type Game1() as this =
     inherit Game()
 
     let graphics = new GraphicsDeviceManager(this)
     let mutable spriteBatch = Unchecked.defaultof<_>
+    let mutable windowSize = WindowSize(this.Window)
 
     do
         this.Content.RootDirectory <- "Content"
@@ -18,7 +25,9 @@ type Game1() as this =
         graphics.PreferredBackBufferHeight <- 600
         this.Window.AllowUserResizing <- true
         // graphics.ApplyChanges()
-        this.Window.ClientSizeChanged.Add(fun arg -> printfn "%s" (this.Window.ClientBounds.Width.ToString()))
+        this.Window.ClientSizeChanged.Add(fun arg ->
+            do windowSize <- windowSize.update()
+               printfn "%s" (windowSize.as_string))
 
     override this.Initialize() =
         // TODO: Add your initialization logic here
