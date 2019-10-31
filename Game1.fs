@@ -13,6 +13,12 @@ type Game1() as this =
     do
         this.Content.RootDirectory <- "Content"
         this.IsMouseVisible <- true
+        graphics.IsFullScreen <- false
+        graphics.PreferredBackBufferWidth <- 800
+        graphics.PreferredBackBufferHeight <- 600
+        this.Window.AllowUserResizing <- true
+        // graphics.ApplyChanges()
+        this.Window.ClientSizeChanged.Add(fun arg -> printfn "%s" (this.Window.ClientBounds.Width.ToString()))
 
     override this.Initialize() =
         // TODO: Add your initialization logic here
