@@ -4,50 +4,58 @@ open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Graphics
 open Microsoft.Xna.Framework.Input
 
-type WindowSize(window: GameWindow) =
-    member this.Width = window.ClientBounds.Width
-    member this.Height = window.ClientBounds.Height
-    member this.Update() = WindowSize(window)
-    member this.AsString = sprintf "%s %s" (this.Width.ToString()) (this.Height.ToString())
 
-type Game1() as this =
-    inherit Game()
+module Game =
 
-    let graphics = new GraphicsDeviceManager(this)
-    let mutable spriteBatch = Unchecked.defaultof<_>
-    let mutable windowSize = WindowSize(this.Window)
+    type WindowSize =
+        { Width: int
+          Height: int }
 
-    do
-        this.Content.RootDirectory <- "Content"
-        this.IsMouseVisible <- true
-        graphics.IsFullScreen <- false
-        graphics.PreferredBackBufferWidth <- 800
-        graphics.PreferredBackBufferHeight <- 600
-        this.Window.AllowUserResizing <- true
-        // graphics.ApplyChanges()
-        this.Window.ClientSizeChanged.Add(fun arg ->
-            do windowSize <- windowSize.Update()
-               printfn "%s" (windowSize.AsString))
+    let asString windowSize = sprintf "%s %s" (windowSize.Width.ToString()) (windowSize.Height.ToString())
 
-    override this.Initialize() =
-        // TODO: Add your initialization logic here
-        base.Initialize()
+    let getWindowSize (window: GameWindow) =
+        lazy
+            ({ Width = window.ClientBounds.Width
+               Height = window.ClientBounds.Height })
 
-    override this.LoadContent() = spriteBatch <- new SpriteBatch(this.GraphicsDevice)
+    type Game1() as this =
+        inherit Game()
 
-    // TODO: use this.Content to load your game content here
+        let graphics = new GraphicsDeviceManager(this)
+        let mutable spriteBatch = Unchecked.defaultof<_>
+        let mutable windowSize = (getWindowSize this.Window).Force()
 
-    override this.Update(gameTime) =
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back = ButtonState.Pressed
-            || Keyboard.GetState().IsKeyDown(Keys.Escape)) then this.Exit()
+        do
+            this.Content.RootDirectory <- "Content"
+            this.IsMouseVisible <- true
+            graphics.IsFullScreen <- false
+            graphics.PreferredBackBufferWidth <- 800
+            graphics.PreferredBackBufferHeight <- 600
+            this.Window.AllowUserResizing <- true
+            // graphics.ApplyChanges()
+            this.Window.ClientSizeChanged.Add(fun arg ->
+                do windowSize <- (getWindowSize this.Window).Force()
+                   printfn "%s" (asString windowSize))
 
-        // TODO: Add your update logic here
+        override this.Initialize() =
+            // TODO: Add your initialization logic here
+            base.Initialize()
 
-        base.Update(gameTime)
+        override this.LoadContent() = spriteBatch <- new SpriteBatch(this.GraphicsDevice)
 
-    override this.Draw(gameTime) =
-        this.GraphicsDevice.Clear Color.CornflowerBlue
+        // TODO: use this.Content to load your game content here
 
-        // TODO: Add your drawing code here
+        override this.Update(gameTime) =
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back = ButtonState.Pressed
+                || Keyboard.GetState().IsKeyDown(Keys.Escape)) then this.Exit()
 
-        base.Draw(gameTime)
+            // TODO: Add your update logic here
+
+            base.Update(gameTime)
+
+        override this.Draw(gameTime) =
+            this.GraphicsDevice.Clear Color.CornflowerBlue
+
+            // TODO: Add your drawing code here
+
+            base.Draw(gameTime)
